@@ -13,12 +13,18 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class MeController
 {
     #[Route('/api/me', name: 'api_me', methods: ['GET'])]
-    public function __invoke(UserInterface $user): JsonResponse
+    public function __invoke(?UserInterface $user): JsonResponse
     {
+        if (!$user) {
+            return new JsonResponse([
+                'user' => null,
+            ]);
+        }
+    
         return new JsonResponse([
             'id' => method_exists($user, 'getId') ? $user->getId() : null,
             'email' => method_exists($user, 'getEmail') ? $user->getEmail() : null,
-//            'roles' => ,
+            'roles' => $user->getRoles(),
         ]);
     }
 }
